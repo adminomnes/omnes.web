@@ -1,178 +1,189 @@
 (function () {
-    // 1) Construcción dinámica del widget al cargar la página
-    const injectWidget = () => {
-        if (document.getElementById('omnes-chat-widget')) return;
+    console.log("OMNES CHAT ATTEMPTING LOAD...");
 
-        // Estilos integrados para asegurar que sea "funcional" sin tocar CSS externo
+    /**
+     * Re-escritura robusta del Widget de Chat para OMNES
+     * Soporta: Construcción dinámica, Speech API, Cloudflare Functions.
+     */
+    const initOmnesChat = () => {
+        // Evitar duplicados
+        if (document.getElementById('omnes-chat-widget')) {
+            console.log("OMNES CHAT already exists.");
+            return;
+        }
+
+        console.log("OMNES CHAT INITIALIZING...");
+
+        // 1) Inyectar Estilos Críticos (para que no dependa de nada externo)
         const style = document.createElement('style');
+        style.id = 'omnes-chat-styles';
         style.textContent = `
-            #omnes-chat-widget { font-family: 'Inter', sans-serif; z-index: 10000; position: fixed; bottom: 20px; right: 20px; }
-            #omnes-toggle { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #00ecff, #34d399); border: none; color: white; font-size: 24px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: transform 0.3s; }
+            #omnes-chat-widget { font-family: 'Inter', system-ui, sans-serif; position: fixed; bottom: 25px; right: 25px; z-index: 2147483647; }
+            #omnes-toggle { width: 65px; height: 65px; border-radius: 50%; background: linear-gradient(135deg, #00ecff, #34d399); border: none; color: white; font-size: 30px; cursor: pointer; box-shadow: 0 6px 20px rgba(0, 236, 255, 0.4); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: center; }
             #omnes-toggle:hover { transform: scale(1.1); }
-            #omnes-panel { position: absolute; bottom: 75px; right: 0; width: 350px; height: 500px; background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; display: none; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(10px); }
+            #omnes-panel { position: absolute; bottom: 85px; right: 0; width: 380px; height: 550px; background: #0f172a; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; display: none; flex-direction: column; overflow: hidden; box-shadow: 0 15px 50px rgba(0,0,0,0.6); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); }
             #omnes-panel.active { display: flex; }
-            .omnes-head { padding: 15px; background: rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; color: #00ecff; font-weight: bold; }
-            #omnes-log { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-            #omnes-form { padding: 15px; background: rgba(0,0,0,0.2); display: flex; gap: 8px; border-top: 1px solid rgba(255,255,255,0.1); }
-            #omnes-input { flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 12px; color: white; font-size: 14px; outline: none; }
+            .omnes-header { padding: 20px; background: rgba(255, 255, 255, 0.05); border-bottom: 1px solid rgba(255, 255, 255, 0.1); display: flex; justify-content: space-between; align-items: center; }
+            .omnes-header h3 { margin: 0; font-size: 16px; color: #00ecff; font-weight: 700; letter-spacing: 0.5px; }
+            #omnes-log { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; scrollbar-width: thin; scrollbar-color: #334155 transparent; }
+            #omnes-form { padding: 20px; background: rgba(0, 0, 0, 0.3); display: flex; gap: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+            #omnes-input { flex: 1; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 12px 15px; color: white; font-size: 14px; outline: none; transition: border-color 0.2s; }
             #omnes-input:focus { border-color: #00ecff; }
-            .omnes-btn { background: none; border: none; color: white; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: color 0.2s; }
-            .omnes-btn:hover { color: #00ecff; }
-            .omnes-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-            .msg { padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.4; max-width: 80%; word-wrap: break-word; }
-            .msg.user { align-self: flex-end; background: #1e293b; color: #f8fafc; border-bottom-right-radius: 2px; }
-            .msg.bot { align-self: flex-start; background: #334155; color: #f8fafc; border-bottom-left-radius: 2px; border-left: 3px solid #00ecff; }
-            .thinking { font-style: italic; opacity: 0.7; }
+            .omnes-action-btn { background: rgba(255, 255, 255, 0.05); border: none; color: white; cursor: pointer; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: all 0.2s; }
+            .omnes-action-btn:hover { background: rgba(255, 255, 255, 0.1); color: #00ecff; }
+            .omnes-action-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+            .omnes-msg { padding: 12px 16px; border-radius: 16px; font-size: 14.5px; line-height: 1.5; max-width: 85%; word-wrap: break-word; animation: omnesIn 0.3s ease-out; }
+            @keyframes omnesIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+            .omnes-msg.user { align-self: flex-end; background: #1e293b; color: #f8fafc; border-bottom-right-radius: 4px; }
+            .omnes-msg.bot { align-self: flex-start; background: rgba(255, 255, 255, 0.05); color: #f8fafc; border: 1px solid rgba(255, 255, 255, 0.1); border-bottom-left-radius: 4px; }
+            .omnes-thinking { font-style: italic; color: #00ecff; opacity: 0.8; animation: omnesPulse 1.5s infinite; }
+            @keyframes omnesPulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
         `;
         document.head.appendChild(style);
 
-        const container = document.createElement('div');
-        container.id = 'omnes-chat-widget';
-        container.innerHTML = `
-            <button id="omnes-toggle" title="Abrir Chat">💬</button>
+        // 2) Crear el DOM del Widget
+        const widget = document.createElement('div');
+        widget.id = 'omnes-chat-widget';
+        widget.innerHTML = `
+            <button id="omnes-toggle" aria-label="Abrir Asistente Omnes">💬</button>
             <div id="omnes-panel">
-                <div class="omnes-head">
-                    <span>OMNES ASISTENTE</span>
-                    <button type="button" class="omnes-btn" onclick="document.getElementById('omnes-panel').classList.remove('active'); document.getElementById('omnes-panel').style.display='none';">✕</button>
+                <div class="omnes-header">
+                    <h3>OMNES AI ASSISTANT</h3>
+                    <button type="button" class="omnes-action-btn" id="omnes-close" style="width:30px;height:30px">✕</button>
                 </div>
                 <div id="omnes-log"></div>
                 <form id="omnes-form">
-                    <input type="text" id="omnes-input" placeholder="Escribe aquí..." autocomplete="off">
-                    <button type="button" id="omnes-talk" class="omnes-btn" title="Hablar">🎙️</button>
-                    <button type="button" id="omnes-stop" class="omnes-btn" title="Parar voz">⏹️</button>
-                    <button type="submit" class="omnes-btn" style="color:#00ecff">➔</button>
+                    <input type="text" id="omnes-input" placeholder="¿En qué puedo ayudarte?" autocomplete="off">
+                    <button type="button" id="omnes-talk" class="omnes-action-btn" title="Hablar">🎙️</button>
+                    <button type="button" id="omnes-stop" class="omnes-action-btn" title="Detener">⏹️</button>
+                    <button type="submit" class="omnes-action-btn" id="omnes-send" style="color:#00ecff">➔</button>
                 </form>
             </div>
         `;
-        document.body.appendChild(container);
+        document.body.appendChild(widget);
 
-        // Referencias con IDs exactos
-        const nodes = {
+        // 3) Referencias de Elementos
+        const el = {
             toggle: document.getElementById('omnes-toggle'),
             panel: document.getElementById('omnes-panel'),
+            close: document.getElementById('omnes-close'),
             log: document.getElementById('omnes-log'),
             form: document.getElementById('omnes-form'),
             input: document.getElementById('omnes-input'),
             talk: document.getElementById('omnes-talk'),
-            stop: document.getElementById('omnes-stop'),
+            stop: document.getElementById('omnes-stop')
         };
 
-        let chatHistory = [];
-        const MAX_HISTORY = 12;
+        let history = [];
+        const MAX_HIST = 12;
 
-        // Speech Recognition
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        // --- Configuración de Voz (Web Speech API) ---
+        const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition = null;
-        let isListening = false;
+        let isActive = false;
 
-        if (SpeechRecognition) {
-            recognition = new SpeechRecognition();
+        if (Speech) {
+            recognition = new Speech();
             recognition.lang = 'es-CL';
             recognition.continuous = false;
-            recognition.onresult = (event) => {
-                const text = event.results[0][0].transcript;
-                nodes.input.value = text;
-                // Disparar envío automáticamente tras hablar
-                nodes.form.dispatchEvent(new Event('submit'));
+            recognition.onresult = (e) => {
+                const text = e.results[0][0].transcript;
+                el.input.value = text;
+                el.form.dispatchEvent(new Event('submit'));
             };
-            recognition.onend = () => {
-                isListening = false;
-                nodes.talk.style.color = '';
-            };
+            recognition.onend = () => { isActive = false; el.talk.style.color = ''; };
         } else {
-            nodes.talk.disabled = true;
-            nodes.talk.title = "Usa Chrome para hablar";
-            nodes.talk.style.opacity = '0.3';
+            el.talk.disabled = true;
+            el.talk.title = "No disponible en este navegador";
         }
+
+        const speak = (text) => {
+            if (!window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.lang = 'es-CL';
+            utter.rate = 1.05;
+            window.speechSynthesis.speak(utter);
+        };
 
         const stopAll = () => {
             if (window.speechSynthesis) window.speechSynthesis.cancel();
-            if (recognition && isListening) recognition.stop();
+            if (recognition && isActive) recognition.stop();
         };
 
-        const addMsg = (role, text, thinking = false) => {
-            const div = document.createElement('div');
-            div.className = `msg ${role} ${thinking ? 'thinking' : ''}`;
-            div.innerText = thinking ? 'Pensando...' : text;
-            nodes.log.appendChild(div);
-            nodes.log.scrollTop = nodes.log.scrollHeight;
-            if (!thinking) {
-                chatHistory.push({ role, content: text });
-                if (chatHistory.length > MAX_HISTORY) chatHistory.shift();
+        // --- Lógica del Chat ---
+        const addMessage = (role, text, isThinking = false) => {
+            const m = document.createElement('div');
+            m.className = `omnes-msg ${role} ${isThinking ? 'omnes-thinking' : ''}`;
+            m.innerText = isThinking ? 'Pensando...' : text;
+            el.log.appendChild(m);
+            el.log.scrollTop = el.log.scrollHeight;
+            if (!isThinking) {
+                history.push({ role, content: text });
+                if (history.length > MAX_HIST) history.shift();
             }
-            return div;
+            return m;
         };
 
-        const callApi = async (message) => {
-            const thinking = addMsg('bot', '', true);
+        const sendMessage = async (e) => {
+            e.preventDefault();
+            const text = el.input.value.trim();
+            if (!text) return;
+
+            el.input.value = '';
+            addMessage('user', text);
+            const thinking = addMessage('bot', '', true);
+
             try {
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message, history: chatHistory.slice(0, -1) })
+                    body: JSON.stringify({ message: text, history: history.slice(0, -1) })
                 });
+
+                if (!response.ok) throw new Error("API Error");
+
                 const data = await response.json();
                 thinking.remove();
-                addMsg('bot', data.reply);
-
-                if (window.speechSynthesis) {
-                    const utter = new SpeechSynthesisUtterance(data.reply);
-                    utter.lang = 'es-CL';
-                    utter.rate = 1.05;
-                    window.speechSynthesis.speak(utter);
-                }
+                addMessage('bot', data.reply);
+                speak(data.reply);
             } catch (err) {
-                thinking.innerText = "Error: No se pudo conectar con el asistente.";
-                console.error(err);
+                console.error("OMNES CHAT ERROR:", err);
+                thinking.className = 'omnes-msg bot';
+                thinking.innerText = "Lo siento, tuve un problema al procesar tu mensaje.";
+                thinking.style.borderColor = "#ef4444";
             }
         };
 
-        // EVENT LISTENERS
+        // --- Event Listeners ---
+        el.form.addEventListener('submit', sendMessage);
 
-        // 3) El formulario tenga un addEventListener("submit", ...) correctamente conectado
-        nodes.form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const text = nodes.input.value.trim();
-            if (!text) return;
-            nodes.input.value = '';
-            addMsg('user', text);
-            callApi(text);
+        el.toggle.addEventListener('click', () => {
+            el.panel.classList.toggle('active');
+            if (el.panel.classList.contains('active')) el.input.focus();
         });
 
-        // Toggle
-        nodes.toggle.onclick = () => {
-            const isActive = nodes.panel.classList.contains('active');
-            if (isActive) {
-                nodes.panel.classList.remove('active');
-                nodes.panel.style.display = 'none';
-            } else {
-                nodes.panel.classList.add('active');
-                nodes.panel.style.display = 'flex';
-                nodes.input.focus();
-            }
-        };
+        el.close.addEventListener('click', () => el.panel.classList.remove('active'));
 
-        // 4) El botón 🎙️ tenga addEventListener("click", ...)
-        nodes.talk.addEventListener('click', () => {
-            if (!recognition || isListening) return;
+        el.talk.addEventListener('click', () => {
+            if (isActive) return;
             stopAll();
-            isListening = true;
-            nodes.talk.style.color = '#00ecff';
+            isActive = true;
+            el.talk.style.color = '#00ecff';
             recognition.start();
         });
 
-        // 5) El botón ⏹️ detenga speechSynthesis y recognition
-        nodes.stop.addEventListener('click', stopAll);
+        el.stop.addEventListener('click', stopAll);
+
+        console.log("OMNES CHAT SUCCESSFULLY INITIALIZED.");
     };
 
-    // Inicializar
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', injectWidget);
+    // Bootstrap
+    if (document.readyState === 'complete') {
+        initOmnesChat();
     } else {
-        injectWidget();
+        window.addEventListener('load', initOmnesChat);
     }
 
-    // 7) Confirmación de carga
     console.log("OMNES CHAT READY");
-
 })();
