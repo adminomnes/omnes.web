@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="https://i.ibb.co/nNSzZ3yH/Chat-GPT-Image-Feb-19-2026-05-31-19-AM.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Clientes | OMNES</title>
+    <link rel="stylesheet" href="/src/css/global.css">
+    <link rel="stylesheet" href="/src/css/home.css">
+    <style>
+        .login-page {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--color-bg-dark);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-card {
+            background: var(--color-secondary);
+            padding: 3rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-border);
+            width: 100%;
+            max-width: 450px;
+            z-index: 10;
+            box-shadow: var(--shadow-premium);
+            backdrop-filter: blur(10px);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .login-logo {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--color-metallic);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--color-border);
+            padding: 1rem;
+            color: var(--color-text-bright);
+            margin-top: 0.5rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        body {
+            background-color: #02060c !important;
+            color: white !important;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Custom Cursor -->
+    <div class="custom-cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <div class="login-page">
+        <canvas id="hero-canvas" class="hero-canvas"></canvas>
+        <div class="login-card reveal active">
+            <div class="login-header">
+                <a href="/">
+                    <img src="https://i.ibb.co/nNSzZ3yH/Chat-GPT-Image-Feb-19-2026-05-31-19-AM.png" alt="OMNES"
+                        style="height: 120px; width: auto; margin-bottom: 1rem;">
+                </a>
+                <p style="color: var(--color-text-dim); font-size: 1.2rem; letter-spacing: 0.1em;">Portal de
+                    Transformación</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label style="color: var(--color-text-dim);">Email Corporativo</label>
+                    <input type="email" id="email" class="form-control" placeholder="usuario@omnes.cl" required>
+                </div>
+                <div class="form-group">
+                    <label style="color: var(--color-text-dim);">Contraseña</label>
+                    <input type="password" id="password" class="form-control" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Acceder al Legado</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { supabase } from '/src/js/supabaseClient.js'
+
+        const loginForm = document.getElementById('loginForm');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const btn = loginForm.querySelector('button');
+
+            btn.innerText = "VERIFICANDO...";
+            btn.disabled = true;
+
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password,
+                })
+
+                if (error) throw error;
+                window.location.href = '/dashboard.html';
+
+            } catch (error) {
+                // More detailed error for the user
+                let msg = "Acceso denegado: " + error.message;
+                if (error.message.includes("Email not confirmed")) {
+                    msg = "Error: El correo aún no ha sido confirmado. Revisa la bandeja de entrada o desactiva la confirmación en Supabase.";
+                }
+                alert(msg);
+                btn.innerText = "Acceder al Legado";
+                btn.disabled = false;
+            }
+        });
+    </script>
+    </div>
+    </div>
+
+    <script type="module" src="/src/js/main.js"></script>
+</body>
+
+</html>

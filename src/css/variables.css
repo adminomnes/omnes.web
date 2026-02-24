@@ -1,0 +1,50 @@
+:root {
+  /* New Vibrant Institutional Palette */
+  --color-bg-dark: #050a1b;
+  /* Modern deep midnight blue */
+  --color-primary: #0a244d;
+  /* Deep navy */
+  --color-secondary: #0f3d7a;
+  /* Surface blue */
+
+  /* Modern Accents */
+  --color-accent: #00ecff;
+  /* Vibrant Calypso */
+  --color-accent-calypso: #00ecff;
+  --color-accent-emerald: #34d399;
+  /* Soft Emerald Green */
+  --color-accent-glow: rgba(0, 236, 255, 0.25);
+
+  --color-metallic: linear-gradient(135deg, #00ecff 0%, #34d399 100%);
+  --color-vibrant-gradient: linear-gradient(135deg, #00ecff 0%, #0a244d 100%);
+
+  --color-text-bright: #ffffff;
+  --color-text-main: #e2e8f0;
+  --color-text-dim: #94a3b8;
+
+  --color-glass: rgba(5, 10, 20, 0.8);
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-light-bg: #f8fafc;
+  --color-light-text: #0f172a;
+
+  /* Glassmorphism 2.0 & Cinematic Depth */
+  --color-glass-pure: rgba(255, 255, 255, 0.03);
+  --color-glass-surface: rgba(10, 36, 77, 0.4);
+  --color-glass-border: rgba(255, 255, 255, 0.08);
+  --color-glass-border-bright: rgba(0, 236, 255, 0.2);
+
+  --shadow-monolith: 0 30px 60px rgba(0, 0, 0, 0.5);
+  --shadow-glow-calypso: 0 0 40px rgba(0, 236, 255, 0.25);
+
+  --blur-premium: blur(20px);
+  --border-thin: 1px solid var(--color-glass-border);
+
+  /* Typography Refinement */
+  --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Spacing & Transitions */
+  --spacing-section: 160px;
+  --transition-cinematic: 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  --transition-smooth: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}

@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | OMNES Client Portal</title>
+    <link rel="stylesheet" href="/src/css/global.css">
+    <link rel="stylesheet" href="/src/css/home.css">
+    <link rel="stylesheet" href="/src/css/dashboard.css">
+    <link rel="stylesheet" href="/src/css/chat.css">
+    <style>
+        /* Chat Notification Animation */
+        @keyframes pulse-red {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .chat-notify {
+            animation: pulse-red 1s infinite;
+            border: 2px solid #ef4444 !important;
+        }
+
+        .badge-count {
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            margin-left: auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 18px;
+            height: 18px;
+            font-weight: 800;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+        }
+    </style>
+</head>
+
+<body class="dashboard-body">
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="sidebar-logo">
+                    <img src="https://i.ibb.co/nNSzZ3yH/Chat-GPT-Image-Feb-19-2026-05-31-19-AM.png" alt="OMNES"
+                        style="height: 50px; width: auto;">
+                </a>
+            </div>
+
+            <div class="sidebar-profile" id="user-profile">
+                <div class="profile-avatar"></div>
+                <div class="profile-info">
+                    <h4>Cargando...</h4>
+                    <span>...</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#" class="nav-link active" data-section="overview"><span class="icon">📊</span> Panel
+                            General</a></li>
+                    <li><a href="#" class="nav-link" data-section="documents"><span class="icon">📂</span>
+                            Documentos</a></li>
+                    <li><a href="#" class="nav-link" data-section="meetings"><span class="icon">🏛️</span> Sala de
+                            Juntas</a></li>
+                    <li><a href="#" class="nav-link" data-section="calendar"><span class="icon">📅</span> Calendario</a>
+                    </li>
+                    <li id="admin-nav" style="display:none;">
+                        <a href="#" class="nav-link" data-section="admin">
+                            <span class="icon">🛡️</span> Administración
+                            <span id="admin-badge" class="badge-count" style="display:none;">0</span>
+                        </a>
+                    </li>
+                    <li><a href="#" class="nav-link" data-section="settings"><span class="icon">⚙️</span>
+                            Configuración</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="logout-link"
+                    style="background:none;border:none;cursor:pointer;width:100%;text-align:left;color:inherit;font:inherit;">Cerrar
+                    Sesión</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <div class="header-title">
+                    <h1>Bienvenido, Cliente Corporativo</h1>
+                    <p>Resumen de actividad - Febrero 2026</p>
+                </div>
+                <div class="user-profile">
+                    <div class="user-profile">
+                        <div class="avatar">OM</div>
+                        <span class="username">Cliente VIP</span>
+                    </div>
+            </header>
+
+            <div id="dashboard-sections">
+                <!-- Overview Section -->
+                <section id="section-overview" class="content-section active">
+                    <div class="dashboard-content">
+                        <!-- KPI Cards -->
+                        <div class="kpi-grid">
+                            <div class="kpi-card">
+                                <h3>Progreso Reinserción</h3>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" style="width: 75%"></div>
+                                </div>
+                                <span class="kpi-value">75%</span>
+                                <span class="kpi-label">Objetivo Mensual</span>
+                            </div>
+                            <div class="kpi-card">
+                                <h3>Sesiones Realizadas</h3>
+                                <span class="kpi-value text-accent">12/15</span>
+                                <span class="kpi-label">Ejecutadas</span>
+                            </div>
+                            <div class="kpi-card">
+                                <h3>Satisfacción</h3>
+                                <span class="kpi-value text-success">4.8/5</span>
+                                <span class="kpi-label">Índice NPS</span>
+                            </div>
+                        </div>
+
+                        <!-- Recent Documents Preview -->
+                        <div class="dashboard-section">
+                            <h2>Informes Recientes</h2>
+                            <div class="table-responsive">
+                                <table class="dashboard-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Documento</th>
+                                            <th>Fecha</th>
+                                            <th>Estado</th>
+                                            <th>Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Informe de Diagnóstico Inicial</td>
+                                            <td>15 Feb 2026</td>
+                                            <td><span class="badge badge-success">Completado</span></td>
+                                            <td><button class="btn-sm btn-secondary">Descargar</button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Client Meeting Status Alert -->
+                        <div id="client-meeting-alert" class="dashboard-section"
+                            style="display:none; border: 1px solid var(--color-accent-emerald); background: rgba(16, 185, 129, 0.05); margin-bottom: 2rem;">
+                            <h2 style="color: var(--color-accent-emerald);"><span class="icon">🏛️</span> Sesión
+                                Confirmada</h2>
+                            <p id="client-alert-text">Su consultor ha agendado su sesión estratégica. Por favor, ingrese
+                                a la <strong>Sala de Juntas</strong> a la hora acordada.</p>
+                            <button class="btn btn-primary"
+                                onclick="document.querySelector('[data-section=\'meetings\']').click()"
+                                style="margin-top: 1rem; background: var(--color-accent-emerald); border-color: var(--color-accent-emerald);">Ir
+                                a la Sala de Juntas</button>
+                        </div>
+
+                        <!-- Admin Agenda Alerts (Only visible to Admin if there are requests) -->
+                        <div id="admin-agenda-alert" class="dashboard-section"
+                            style="display:none; border: 1px solid var(--color-accent-calypso); background: rgba(0, 236, 255, 0.05); margin-bottom: 2rem;">
+                            <h2 style="color: var(--color-accent-calypso);"><span class="icon">🔔</span> Notificaciones
+                                de Gerencia</h2>
+                            <p id="agenda-alert-text">Usted tiene solicitudes de atención estratégica pendientes de
+                                revisión.</p>
+                            <button class="btn btn-primary"
+                                onclick="document.querySelector('[data-section=\'admin\']').click()"
+                                style="margin-top: 1rem;">Revisar Agenda</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Documents Section -->
+                <section id="section-documents" class="content-section">
+                    <div class="dashboard-section">
+                        <h2>Gestión Documental</h2>
+                        <div class="upload-zone">
+                            <p>Sube archivos para revisión estratégica</p>
+                            <input type="file" id="doc-upload" hidden>
+                            <button class="btn btn-secondary"
+                                onclick="document.getElementById('doc-upload').click()">Seleccionar Archivo</button>
+                        </div>
+                        <div class="table-responsive" style="margin-top: 2rem;">
+                            <table class="dashboard-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Tamaño</th>
+                                        <th>Fecha</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="document-list">
+                                    <!-- Dynamic files will appear here -->
+                                    <tr>
+                                        <td colspan="4" style="text-align:center; padding: 2rem; opacity: 0.5;">Cargando
+                                            documentos...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Meetings Section (Digital Boardroom) -->
+                <section id="section-meetings" class="content-section">
+                    <div class="dashboard-section">
+                        <h2>Sala de Juntas Digital</h2>
+                        <p style="margin-bottom: 2rem; opacity: 0.7;">Canal de alta seguridad para sesiones estratégicas
+                            y mentoría.</p>
+
+                        <div id="jitsi-container"
+                            style="height: 600px; width: 100%; border-radius: 15px; overflow: hidden; background: #000; border: 1px solid var(--color-accent-calypso);">
+                            <div
+                                style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem;">
+                                <div class="icon" style="font-size: 4rem; margin-bottom: 1rem;">🛰️</div>
+                                <h3>Sala de Juntas Desconectada</h3>
+                                <p>Haz clic abajo para iniciar el canal seguro.</p>
+                                <button id="start-meeting-btn" class="btn btn-primary" style="margin-top: 1rem;">Entrar
+                                    a la Sesión</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Calendar Section -->
+
+                <!-- Calendar Section (Became Meeting Requests) -->
+                <section id="section-calendar" class="content-section">
+                    <div class="dashboard-section">
+                        <h2>Solicitud de Atención Estratégica</h2>
+                        <p style="margin-bottom: 2rem; opacity: 0.7;">Indique el motivo de su consulta y su
+                            disponibilidad. Un consultor OMNES se pondrá en contacto pronto.</p>
+
+                        <form id="meeting-request-form" class="settings-form">
+                            <!-- Admin only selector -->
+                            <div class="form-group" id="admin-client-selector-group"
+                                style="display:none; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+                                <label style="color: var(--color-accent-calypso); font-weight: bold;">🏢 Seleccionar
+                                    Socio Estratégico</label>
+                                <select id="request-client-id" class="form-control"
+                                    style="background: rgba(0,236,255,0.05); color: white; border: 1px solid rgba(0,236,255,0.2);">
+                                    <option value="">-- Elija un cliente de la lista --</option>
+                                </select>
+                                <p style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.6;">Como administrador,
+                                    usted puede agendar sesiones directamente para sus socios.</p>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Asunto de la Consulta</label>
+                                <select id="request-subject" class="form-control" required
+                                    style="background: rgba(255,255,255,0.05); color: white;">
+                                    <option value="estrategia">Consultoría Estratégica</option>
+                                    <option value="operaciones">Optimización de Operaciones</option>
+                                    <option value="legal">Asuntos Legales / Cumplimiento</option>
+                                    <option value="otro">Otros Asuntos</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha y Hora Sugerida</label>
+                                <input type="datetime-local" id="request-date" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Mensaje / Notas Adicionales</label>
+                                <textarea id="request-message" class="form-control" rows="4"
+                                    placeholder="Describa brevemente el objetivo de la sesión..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" id="submit-request-btn" class="btn btn-primary">Enviar
+                                    Solicitud</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Settings Section -->
+                <section id="section-settings" class="content-section">
+                    <div class="dashboard-section">
+                        <h2>Configuración de Cuenta</h2>
+                        <form id="profile-form" class="settings-form">
+                            <div class="form-group">
+                                <label>Nombre de la Empresa / Cliente</label>
+                                <input type="text" id="setting-company" class="form-control"
+                                    placeholder="Nombre Empresa">
+                            </div>
+                            <div class="form-group">
+                                <label>Foto de Perfil (JPG/PNG)</label>
+                                <input type="file" id="setting-avatar-file" class="form-control" accept="image/*">
+                                <p style="font-size: 0.8rem; color: gray; margin-top: 0.5rem;">Sube una imagen cuadrada
+                                    para mejor resultado.</p>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" id="save-profile-btn" class="btn btn-primary">Guardar
+                                    Cambios</button>
+                            </div>
+                        </form>
+
+                        <hr style="opacity: 0.1; margin: 2rem 0;">
+
+                        <h3>Seguridad</h3>
+                        <button class="btn btn-secondary">Cambiar Contraseña</button>
+                    </div>
+                </section>
+
+                <!-- Admin Section -->
+                <section id="section-admin" class="content-section">
+                    <div class="dashboard-section">
+                        <h2>Panel Administrativo | Gestión OMNES</h2>
+
+                        <div
+                            style="margin-bottom: 3rem; background: rgba(0,236,255,0.05); padding: 2.5rem; border-radius: 20px; border: 1px solid rgba(0,236,255,0.1);">
+                            <h3>➕ Registrar Socio Estratégico (Nuevo Cliente)</h3>
+                            <p style="font-size: 0.9rem; margin-bottom: 2rem; opacity: 0.7;">Esto creará un acceso
+                                directo en el sistema con perfil completo.</p>
+                            <form id="admin-create-user-form"
+                                style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; align-items: end;">
+                                <div class="form-group">
+                                    <label>Email del Cliente</label>
+                                    <input type="email" id="new-user-email" class="form-control"
+                                        placeholder="cliente@empresa.com" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nombre Empresa</label>
+                                    <input type="text" id="new-user-company" class="form-control"
+                                        placeholder="Nombre S.A." required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Teléfono de Contacto</label>
+                                    <input type="tel" id="new-user-phone" class="form-control" placeholder="+56 9 ...">
+                                </div>
+                                <div class="form-group">
+                                    <label>Industria / Sector</label>
+                                    <input type="text" id="new-user-industry" class="form-control"
+                                        placeholder="Logística, Finanzas...">
+                                </div>
+                                <div class="form-group">
+                                    <label>País / Región</label>
+                                    <input type="text" id="new-user-country" class="form-control"
+                                        placeholder="Chile, Panamá...">
+                                </div>
+                                <div class="form-group">
+                                    <label>Contraseña Temporal</label>
+                                    <input type="password" id="new-user-pass" class="form-control" placeholder="******"
+                                        required>
+                                </div>
+                                <div style="grid-column: span 3; text-align: right; margin-top: 0.5rem;">
+                                    <button type="submit" id="create-user-btn" class="btn btn-primary"
+                                        style="padding: 1rem 3rem;">Registrar en Base de Datos</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- SECCIÓN 1: SOLICITUDES PENDIENTES -->
+                        <div style="margin-bottom: 2rem;">
+                            <h3 style="color: var(--color-accent);"><span class="icon">📨</span> Consultas por Atender
+                            </h3>
+                            <div class="table-responsive">
+                                <table class="dashboard-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Socio Estratégico</th>
+                                            <th>Asunto</th>
+                                            <th>Fecha Sugerida</th>
+                                            <th>Estado</th>
+                                            <th>Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-requests-list">
+                                        <!-- Pendientes cargan aquí -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- SECCIÓN 2: AGENDA CONFIRMADA -->
+                        <div
+                            style="margin-bottom: 3rem; background: rgba(0,255,133,0.03); padding: 1.5rem; border-radius: 15px; border: 1px solid rgba(0,255,133,0.1);">
+                            <h3 style="color: var(--color-accent-emerald);"><span class="icon">📅</span> Agenda de
+                                Sesiones Confirmadas</h3>
+                            <div class="table-responsive">
+                                <table class="dashboard-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Socio</th>
+                                            <th>Sesión</th>
+                                            <th>Horario Confirmado</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-agenda-list">
+                                        <!-- Confirmadas cargan aquí -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                            <h3>👥 Directorio de Socios Estratégicos</h3>
+                            <input type="text" id="client-search" placeholder="🔍 Buscar empresa o industria..."
+                                style="padding: 0.8rem 1.5rem; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; width: 300px;">
+                        </div>
+                        <div class="table-responsive">
+                            <table class="dashboard-table">
+                                <thead>
+                                    <tr>
+                                        <th>Empresa</th>
+                                        <th>Contacto / Email</th>
+                                        <th>Industria</th>
+                                        <th>País</th>
+                                        <th>Sala Juntas</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-client-list">
+                                    <!-- Clients will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- OMNES SECURE CHAT WIDGET -->
+    <button id="chat-toggle" class="chat-toggle-btn">
+        💬
+        <span id="chat-badge"
+            style="display:none; position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; width: 22px; height: 22px; border-radius: 50%; font-size: 0.7rem; display: none; align-items: center; justify-content: center; border: 2px solid var(--color-bg); font-weight: bold;">0</span>
+    </button>
+
+    <div id="chat-widget" class="chat-widget">
+        <div class="chat-header">
+            <h3>OMNES Secure Channel</h3>
+            <button id="chat-close" style="background:none;border:none;color:gray;cursor:pointer;">✖</button>
+        </div>
+        <div id="chat-messages" class="chat-messages">
+            <!-- Messages go here -->
+            <div class="message other-message">Bienvenido al Canal Seguro OMNES. ¿En qué podemos asistirle hoy?</div>
+        </div>
+        <form id="chat-form" class="chat-input-area">
+            <input type="text" id="chat-input" class="chat-input" placeholder="Escriba su mensaje..." required>
+            <button type="submit" class="chat-send-btn">➤</button>
+        </form>
+    </div>
+
+    <script type="module">
+        import { supabase } from '/src/js/supabaseClient.js';
+
+        const profileEl = document.getElementById('user-profile');
+        const adminNav = document.getElementById('admin-nav');
+        let currentUser = null;
+
+        async function initDashboard() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                window.location.href = '/login.html';
+                return;
+            }
+            currentUser = user;
+            // 1. Force Admin Rights for Master Email
+            if (user.email === 'gerencia@omnes.cl') {
+                user.role = 'admin'; // Internal override
+            }
+
+            // Load Profile
+            let { data: profile } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', user.id)
+                .single();
+
+            // Auto-create profile if missing or force role for master email
+            if (user.email === 'gerencia@omnes.cl') {
+                if (!profile) {
+                    const { data: newProfile } = await supabase
+                        .from('profiles')
+                        .insert([{ id: user.id, company_name: 'Gerencia OMNES', role: 'admin' }])
+                        .select()
+                        .single();
+                    profile = newProfile;
+                } else if (profile.role !== 'admin') {
+                    await supabase.from('profiles').update({ role: 'admin' }).eq('id', user.id);
+                    profile.role = 'admin';
+                }
+            }
+
+            if (profile) {
+                currentUser = { ...user, ...profile }; // Merge auth and profile data
+                updateProfileUI(profile);
+                if (profile.role === 'admin') {
+                    adminNav.style.display = 'block';
+                    loadAdminRequests(); // INITIAL CHECK FOR ADMIN
+                    loadClientSelector(); // Prepare scheduling tool
+                    loadAdminClients(); // ALSO LOAD CLIENTS IMMEDIATELY
+                } else {
+                    checkClientMeetings(); // CHECK FOR CLIENT ALERTS
+                }
+
+                // Fill settings form
+                document.getElementById('setting-company').value = profile.company_name || '';
+            } else {
+                try {
+                    // FALLBACK: User exists in Auth but not in Profiles table
+                    const fallbackName = user.email.split('@')[0];
+                    const fallbackProfile = { company_name: fallbackName, role: 'client', avatar_url: null };
+                    updateProfileUI(fallbackProfile);
+                    document.getElementById('setting-company').value = fallbackProfile.company_name;
+
+                    // Try to create the missing profile row quietly
+                    await supabase.from('profiles').insert([{ id: user.id, company_name: fallbackName, role: 'client', email: user.email }]);
+                } catch (err) {
+                    console.error("Profile fallback error:", err);
+                }
+            }
+
+            initNavigation();
+            initChat();
+        }
+
+        function updateProfileUI(profile) {
+            const avatar = profile.avatar_url || `https://ui-avatars.com/api/?name=${profile.company_name || 'User'}&background=00ecff&color=020617`;
+            profileEl.innerHTML = `
+                <img src="${avatar}" class="profile-avatar">
+                <div class="profile-info">
+                    <h4>${profile.company_name || 'Nuevo Cliente'}</h4>
+                    <span>${profile.role === 'admin' ? 'ADMINISTRADOR' : 'CLIENTE ESTRATÉGICO'}</span>
+                </div>
+            `;
+        }
+
+        // Navigation is now handled by the consolidated listener at the bottom of the script.
+        function initNavigation() {
+            // Logic moved to bottom listener for better state management
+        }
+
+        // Profile Update Logic (with File Upload)
+        const profileForm = document.getElementById('profile-form');
+        const saveBtn = document.getElementById('save-profile-btn');
+
+        profileForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            saveBtn.innerText = "Guardando...";
+            saveBtn.disabled = true;
+
+            const companyName = document.getElementById('setting-company').value;
+            const avatarFile = document.getElementById('setting-avatar-file').files[0];
+            let avatarUrl = null;
+
+            try {
+                // 1. Handle File Upload if exists
+                if (avatarFile) {
+                    const fileExt = avatarFile.name.split('.').pop();
+                    const fileName = `${currentUser.id}-${Math.random()}.${fileExt}`;
+                    const filePath = `avatars/${fileName}`;
+
+                    const { error: uploadError } = await supabase.storage
+                        .from('avatars')
+                        .upload(fileName, avatarFile);
+
+                    if (uploadError) throw uploadError;
+
+                    // Get Public URL
+                    const { data: { publicUrl } } = supabase.storage
+                        .from('avatars')
+                        .getPublicUrl(fileName);
+
+                    avatarUrl = publicUrl;
+                }
+
+                // 2. Update Profile Table
+                const updates = {
+                    company_name: companyName,
+                    ...(avatarUrl && { avatar_url: avatarUrl }),
+                };
+
+                const { error } = await supabase
+                    .from('profiles')
+                    .update(updates)
+                    .eq('id', currentUser.id);
+
+                if (error) throw error;
+
+                alert("Perfil actualizado correctamente");
+                location.reload();
+
+            } catch (err) {
+                alert("Error al actualizar: " + err.message);
+            } finally {
+                saveBtn.innerText = "Guardar Cambios";
+                saveBtn.disabled = false;
+            }
+        });
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            await supabase.auth.signOut();
+            window.location.href = '/login.html';
+        });
+
+        // Chat Logic (Unified)
+        const toggleBtn = document.getElementById('chat-toggle');
+        const widget = document.getElementById('chat-widget');
+        const closeBtn = document.getElementById('chat-close');
+        const chatForm = document.getElementById('chat-form');
+        const messagesDiv = document.getElementById('chat-messages');
+
+        toggleBtn.addEventListener('click', () => {
+            widget.style.display = 'flex';
+            toggleBtn.style.display = 'none';
+            clearChatNotifications();
+        });
+        closeBtn.addEventListener('click', () => {
+            widget.style.display = 'none';
+            toggleBtn.style.display = 'flex';
+        });
+
+        let unreadCount = 0;
+        let originalTitle = document.title;
+        let flashInterval = null;
+        const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3');
+
+        function notifyMessage() {
+            // 1. Play Sound
+            notificationSound.play().catch(e => console.log("Audio play blocked by browser"));
+
+            // 2. Update Badge
+            unreadCount++;
+            const badge = document.getElementById('chat-badge');
+            badge.innerText = unreadCount;
+            badge.style.display = 'flex';
+
+            // 3. Flash Toggle
+            toggleBtn.classList.add('chat-notify');
+
+            // 4. Flash Title
+            if (!flashInterval) {
+                flashInterval = setInterval(() => {
+                    document.title = document.title === originalTitle ? '📢 Nuevo Mensaje OMNES' : originalTitle;
+                }, 1000);
+            }
+        }
+
+        function clearChatNotifications() {
+            unreadCount = 0;
+            const badge = document.getElementById('chat-badge');
+            badge.style.display = 'none';
+            toggleBtn.classList.remove('chat-notify');
+            clearInterval(flashInterval);
+            flashInterval = null;
+            document.title = originalTitle;
+        }
+
+        async function initChat() {
+            const { data: history } = await supabase
+                .from('messages')
+                .select('*')
+                .order('created_at', { ascending: true })
+                .limit(50);
+
+            if (history) {
+                messagesDiv.innerHTML = '';
+                history.forEach(msg => appendMessage(msg));
+            }
+
+            supabase
+                .channel('global')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+                    appendMessage(payload.new);
+                    // Only notify if message is from others and chat is closed
+                    if (payload.new.user_email !== currentUser.email && widget.style.display !== 'flex') {
+                        notifyMessage();
+                    }
+                })
+                .subscribe();
+        }
+
+        function appendMessage(msg) {
+            const div = document.createElement('div');
+            div.className = `message ${msg.user_email === currentUser?.email ? 'my-message' : 'other-message'}`;
+            div.innerHTML = `<strong>${msg.user_email.split('@')[0]}:</strong><br>${msg.content}`;
+            messagesDiv.appendChild(div);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const content = input.value.trim();
+            if (!content) return;
+
+            const { error } = await supabase
+                .from('messages')
+                .insert([{ user_email: currentUser.email, content: content }]);
+
+            if (!error) input.value = '';
+        });
+
+        initDashboard();
+
+        // 4. Video Meeting Logic (Enhanced Control)
+        const startMeetingBtn = document.getElementById('start-meeting-btn');
+        const jitsiContainer = document.getElementById('jitsi-container');
+
+        async function checkMeetingStatus() {
+            if (currentUser.role === 'admin') {
+                // Admins can always see the "Join" button for their own room
+                return true;
+            }
+
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('meeting_active')
+                .eq('id', currentUser.id)
+                .single();
+
+            if (profile && profile.meeting_active) {
+                return true;
+            }
+            return false;
+        }
+
+        async function refreshMeetingUI() {
+            const isActive = await checkMeetingStatus();
+            const container = document.getElementById('jitsi-container');
+
+            if (isActive) {
+                container.innerHTML = `
+                    <div style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem;">
+                        <div class="icon" style="font-size: 4rem; margin-bottom: 1rem;">🟢</div>
+                        <h3>Canal Estratégico Abierto</h3>
+                        <p>El Consultor OMNES ha habilitado la sesión. Puedes entrar ahora.</p>
+                        <button id="real-start-btn" class="btn btn-primary" style="margin-top: 1rem;">Unirme a la Videollamada</button>
+                    </div>
+                `;
+                document.getElementById('real-start-btn').onclick = startMeeting;
+            } else {
+                container.innerHTML = `
+                    <div style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; opacity: 0.6;">
+                        <div class="icon" style="font-size: 4rem; margin-bottom: 1rem;">🔒</div>
+                        <h3>Sala de Juntas Privada</h3>
+                        <p>La sesión aún no ha sido habilitada por su Consultor OMNES.</p>
+                        <p style="font-size: 0.8rem;">Por favor, espere a que se le envíe la invitación o se active el canal.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function startMeeting() {
+            const roomName = `OMNES_STRATEGY_ROOM_${currentUser.id.substring(0, 8)}`;
+            // Jitsi URL with Lobby enabled and controls visible
+            const jitsiUrl = `https://meet.jit.si/${roomName}#config.prejoinPageEnabled=true&config.lobby.enabled=true&userInfo.displayName='${currentUser.email.split('@')[0]}'`;
+
+            jitsiContainer.innerHTML = `<iframe src="${jitsiUrl}" 
+                    style="border:0; width:100%; height:100%;" 
+                    allow="camera; microphone; fullscreen; display-capture; autoplay">
+                </iframe>`;
+        }
+
+        // 5. Admin Management Logic
+        async function loadAdminClients() {
+            const { data: clients } = await supabase
+                .from('profiles')
+                .select('*')
+                .order('company_name', { ascending: true });
+
+            const listBody = document.getElementById('admin-client-list');
+            listBody.innerHTML = '';
+
+            window.allClientsCache = clients || []; // Store for search
+            renderClients(window.allClientsCache);
+        }
+
+        function renderClients(clients) {
+            const listBody = document.getElementById('admin-client-list');
+            listBody.innerHTML = '';
+
+            if (!clients || clients.length === 0) {
+                listBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 2rem; opacity: 0.5;">No se encontraron socios con ese criterio.</td></tr>';
+                return;
+            }
+
+            clients.forEach(client => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <strong>${client.company_name || 'Sin nombre'}</strong>
+                    </td>
+                    <td>
+                        <div style="font-size: 0.9rem;">${client.email || 'Sin email'}</div>
+                        <div style="font-size: 0.8rem; opacity: 0.6;">${client.phone || '-'}</div>
+                    </td>
+                    <td><span class="badge" style="background: rgba(255,255,255,0.05);">${client.industry || 'N/A'}</span></td>
+                    <td>${client.country || '-'}</td>
+                    <td>
+                        <button class="btn-sm ${client.meeting_active ? 'btn-danger' : 'btn-primary'}" 
+                                onclick="window.toggleMeeting('${client.id}', ${client.meeting_active})">
+                            ${client.meeting_active ? 'Desvincular' : 'Activar Canal'}
+                        </button>
+                    </td>
+                `;
+                listBody.appendChild(tr);
+            });
+        }
+
+        // Real-time Search
+        document.getElementById('client-search').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = (window.allClientsCache || []).filter(c =>
+                (c.company_name && c.company_name.toLowerCase().includes(term)) ||
+                (c.industry && c.industry.toLowerCase().includes(term)) ||
+                (c.email && c.email.toLowerCase().includes(term))
+            );
+            renderClients(filtered);
+        });
+
+        window.toggleMeeting = async (userId, currentState) => {
+            const { error } = await supabase
+                .from('profiles')
+                .update({ meeting_active: !currentState })
+                .eq('id', userId);
+
+            if (!error) loadAdminClients();
+            else alert("Error al cambiar estado: " + error.message);
+        };
+
+        // 6. Meeting Requests Logic
+        const meetingForm = document.getElementById('meeting-request-form');
+        const submitReqBtn = document.getElementById('submit-request-btn');
+
+        meetingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            submitReqBtn.innerText = "Procesando...";
+            submitReqBtn.disabled = true;
+
+            const isAdminSchedule = currentUser.role === 'admin';
+            const targetClientId = isAdminSchedule ? document.getElementById('request-client-id').value : currentUser.id;
+
+            if (isAdminSchedule && !targetClientId) {
+                alert("Por favor seleccione un cliente.");
+                submitReqBtn.innerText = "Enviar Solicitud";
+                submitReqBtn.disabled = false;
+                return;
+            }
+
+            // If admin, we need to know the company name of target client
+            let targetCompanyName = currentUser.company_name;
+            if (isAdminSchedule) {
+                const select = document.getElementById('request-client-id');
+                targetCompanyName = select.options[select.selectedIndex].text;
+            }
+
+            const requestData = {
+                user_id: targetClientId,
+                company_name: targetCompanyName,
+                subject: document.getElementById('request-subject').value,
+                suggested_date: document.getElementById('request-date').value,
+                message: document.getElementById('request-message').value,
+                status: isAdminSchedule ? 'scheduled' : 'pending' // Admin schedules directly
+            };
+
+            try {
+                const { error } = await supabase.from('meeting_requests').insert([requestData]);
+                if (error) throw error;
+                alert(isAdminSchedule ? "Sesión agendada y notificada al socio." : "Solicitud enviada. Su consultor revisará la disponibilidad.");
+                meetingForm.reset();
+                if (isAdminSchedule) checkClientMeetings(); // Refresh if scheduling for self (test)
+            } catch (err) {
+                alert("Error: " + err.message);
+            } finally {
+                submitReqBtn.innerText = "Enviar Solicitud";
+                submitReqBtn.disabled = false;
+            }
+        });
+
+        // 7. Admin Extension: Create User & Requests List
+        async function loadClientSelector() {
+            if (currentUser.role !== 'admin') return;
+
+            const { data: clients } = await supabase
+                .from('profiles')
+                .select('id, company_name')
+                .neq('email', 'gerencia@omnes.cl') // Optional: hide self
+                .order('company_name', { ascending: true });
+
+            const selector = document.getElementById('request-client-id');
+            const group = document.getElementById('admin-client-selector-group');
+
+            if (clients) {
+                group.style.display = 'block';
+                // Reset but keep first option
+                selector.innerHTML = '<option value="">-- Elija un cliente de la lista --</option>';
+                clients.forEach(c => {
+                    if (c.id !== currentUser.id) {
+                        const opt = document.createElement('option');
+                        opt.value = c.id;
+                        opt.textContent = c.company_name || 'Sin Nombre';
+                        selector.appendChild(opt);
+                    }
+                });
+            }
+        }
+        async function loadAdminRequests() {
+            const { data: requests } = await supabase
+                .from('meeting_requests')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            const pendingList = document.getElementById('admin-requests-list');
+            const agendaList = document.getElementById('admin-agenda-list');
+            const adminBadge = document.getElementById('admin-badge');
+            const agendaAlert = document.getElementById('admin-agenda-alert');
+            const agendaAlertText = document.getElementById('agenda-alert-text');
+
+            pendingList.innerHTML = '';
+            agendaList.innerHTML = '';
+
+            const pendingRequests = requests ? requests.filter(r => r.status === 'pending') : [];
+            const confirmedRequests = requests ? requests.filter(r => r.status === 'scheduled') : [];
+
+            // Update Notification Badge
+            if (pendingRequests.length > 0) {
+                adminBadge.innerText = pendingRequests.length;
+                adminBadge.style.display = 'inline-flex';
+                if (currentUser.role === 'admin') {
+                    agendaAlert.style.display = 'block';
+                    agendaAlertText.innerText = `Tiene ${pendingRequests.length} nueva(s) consulta(s) estratégica(s) esperando respuesta.`;
+                }
+            } else {
+                adminBadge.style.display = 'none';
+                agendaAlert.style.display = 'none';
+            }
+
+            // Render Pendientes
+            if (pendingRequests.length > 0) {
+                pendingRequests.forEach(req => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${req.company_name}</strong></td>
+                        <td style="text-transform: capitalize;">${req.subject}</td>
+                        <td>${new Date(req.suggested_date).toLocaleString()}</td>
+                        <td><span class="badge badge-warning">PENDIENTE</span></td>
+                        <td>
+                            <button class="btn-sm btn-secondary" onclick="window.updateStatus('${req.id}', 'scheduled')">Confirmar Agenda</button>
+                        </td>
+                    `;
+                    pendingList.appendChild(tr);
+                });
+            } else {
+                pendingList.innerHTML = '<tr><td colspan="5" style="text-align:center; opacity:0.5; padding: 1rem;">No hay consultas nuevas.</td></tr>';
+            }
+
+            // Render Agenda Confirmada
+            if (confirmedRequests.length > 0) {
+                confirmedRequests.forEach(req => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${req.company_name}</td>
+                        <td style="text-transform: capitalize;">${req.subject}</td>
+                        <td>${new Date(req.suggested_date).toLocaleString()}</td>
+                        <td><span class="badge badge-success">AGENDADA</span></td>
+                    `;
+                    agendaList.appendChild(tr);
+                });
+            } else {
+                agendaList.innerHTML = '<tr><td colspan="4" style="text-align:center; opacity:0.5; padding: 1rem;">No hay sesiones en la agenda aún.</td></tr>';
+            }
+        }
+
+        window.updateStatus = async (id, status) => {
+            try {
+                const { error } = await supabase
+                    .from('meeting_requests')
+                    .update({ status })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                alert("Sesión agendada con éxito. Ya aparece en la agenda del cliente.");
+                loadAdminRequests();
+            } catch (err) {
+                alert("Error al actualizar estado: " + err.message);
+                console.error("Update error:", err);
+            }
+        };
+
+        const createUserForm = document.getElementById('admin-create-user-form');
+        createUserForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('create-user-btn');
+            btn.innerText = "Registrando...";
+            btn.disabled = true;
+
+            const email = document.getElementById('new-user-email').value;
+            const company = document.getElementById('new-user-company').value;
+            const phone = document.getElementById('new-user-phone').value;
+            const industry = document.getElementById('new-user-industry').value;
+            const country = document.getElementById('new-user-country').value;
+            const pass = document.getElementById('new-user-pass').value;
+
+            try {
+                // CALLING THE MASTER RPC FUNCTION
+                const { data, error } = await supabase.rpc('create_new_omnes_client', {
+                    p_email: email,
+                    p_password: pass,
+                    p_company: company,
+                    p_phone: phone,
+                    p_industry: industry,
+                    p_country: country
+                });
+
+                if (error) throw error;
+
+                alert("Socio Estratégico registrado con éxito en la Base de Datos OMNES.");
+                createUserForm.reset();
+                loadAdminClients();
+            } catch (err) {
+                alert("Error al crear usuario: " + err.message);
+            } finally {
+                btn.innerText = "Registrar en Base de Datos";
+                btn.disabled = false;
+            }
+        });
+
+        // 8. Client Notification Logic
+        async function checkClientMeetings() {
+            if (!currentUser) return;
+            try {
+                const { data: requests } = await supabase
+                    .from('meeting_requests')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .eq('status', 'scheduled')
+                    .order('suggested_date', { ascending: true });
+
+                const alertBox = document.getElementById('client-meeting-alert');
+                const alertText = document.getElementById('client-alert-text');
+
+                if (requests && requests.length > 0) {
+                    const nextMeeting = requests[0];
+                    const meetingDate = new Date(nextMeeting.suggested_date).toLocaleString();
+                    alertBox.style.display = 'block';
+                    alertText.innerHTML = `Su sesión estratégica sobre <strong>${nextMeeting.subject}</strong> ha sido agendada para: <br><span style="font-size: 1.2rem; color: #fff;">${meetingDate}</span><br>Por favor, ingrese a su <strong>Sala de Juntas</strong> en ese horario.`;
+                }
+            } catch (err) {
+                console.error("Error checking meetings:", err);
+            }
+        }
+
+
+        // 3. Document Management Logic
+        const docUploadInput = document.getElementById('doc-upload');
+        const docListContainer = document.getElementById('document-list');
+
+        async function loadDocuments() {
+            try {
+                const { data: files, error } = await supabase.storage
+                    .from('documents')
+                    .list('', { limit: 50, sortBy: { column: 'created_at', order: 'desc' } });
+
+                if (error) throw error;
+
+                if (!files || files.length === 0) {
+                    docListContainer.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 2rem; opacity: 0.5;">No hay documentos disponibles.</td></tr>';
+                    return;
+                }
+
+                docListContainer.innerHTML = '';
+                files.forEach(file => {
+                    const row = document.createElement('tr');
+                    const sizeKB = Math.round(file.metadata.size / 1024);
+                    const date = new Date(file.created_at).toLocaleDateString();
+
+                    row.innerHTML = `
+                        <td>${file.name}</td>
+                        <td>${sizeKB} KB</td>
+                        <td>${date}</td>
+                        <td>
+                            <button class="btn-sm btn-secondary" onclick="window.downloadDoc('${file.name}')">Descargar</button>
+                        </td>
+                    `;
+                    docListContainer.appendChild(row);
+                });
+            } catch (err) {
+                console.error("Error loading docs:", err);
+            }
+        }
+
+        window.downloadDoc = async (fileName) => {
+            try {
+                const { data, error } = await supabase.storage
+                    .from('documents')
+                    .download(fileName);
+
+                if (error) throw error;
+
+                const url = URL.createObjectURL(data);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } catch (err) {
+                alert("Error al descargar: " + err.message);
+            }
+        };
+
+        docUploadInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const btn = document.querySelector('[onclick*="doc-upload"]');
+            const originalText = btn.innerText;
+            btn.innerText = "Subiendo...";
+            btn.disabled = true;
+
+            try {
+                const { error } = await supabase.storage
+                    .from('documents')
+                    .upload(`${Date.now()}_${file.name}`, file);
+
+                if (error) throw error;
+
+                alert("Documento subido con éxito");
+                loadDocuments();
+            } catch (err) {
+                alert("Error al subir: " + err.message);
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        // Consolidated Navigation Listener
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const sectionId = link.getAttribute('data-section');
+
+                // Update active link
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+
+                // Show section
+                document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+                const targetSection = document.getElementById(`section-${sectionId}`);
+                if (targetSection) targetSection.classList.add('active');
+
+                // Trigger Logic
+                if (sectionId === 'meetings') refreshMeetingUI();
+                if (sectionId === 'admin') { loadAdminClients(); loadAdminRequests(); }
+                if (sectionId === 'calendar') { loadClientSelector(); }
+                if (sectionId === 'documents') loadDocuments();
+            });
+        });
+
+    </script>
+</body>
+
+</html>

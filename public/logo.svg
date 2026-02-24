@@ -1,0 +1,11 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Symbol: Abstract 'O' or Connection Node -->
+  <path d="M30 30C30 46.5685 16.5685 60 0 60V0C16.5685 0 30 13.4315 30 30Z" fill="#C6A75E"/>
+  <circle cx="15" cy="30" r="8" fill="#0B1C2D"/>
+  
+  <!-- Text: OMNES - Bold Modern Serif/Sans Hybrid -->
+  <text x="45" y="42" fill="#0B1C2D" font-family="'Inter', sans-serif" font-weight="700" font-size="32" letter-spacing="2">OMNES</text>
+  
+  <!-- Text: GROUP - Smaller, Tracking -->
+  <text x="46" y="58" fill="#C6A75E" font-family="'Inter', sans-serif" font-weight="500" font-size="10" letter-spacing="6">GROUP</text>
+</svg>

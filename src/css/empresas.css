@@ -1,0 +1,132 @@
+/* Landing Page Styles */
+
+/* Hero Override */
+.landing-hero {
+    background: linear-gradient(rgba(11, 28, 45, 0.9), rgba(11, 28, 45, 0.8)), url('/placeholder-office.jpg');
+    /* Need placeholder or just color */
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 120px 0;
+    text-align: center;
+    /* Premium Dark Feel */
+}
+
+.landing-hero h1 {
+    font-size: 3rem;
+    max-width: 900px;
+    margin: 0 auto var(--spacing-md);
+    line-height: 1.2;
+}
+
+.landing-hero .btn-lg {
+    padding: 16px 32px;
+    font-size: 1.1rem;
+    margin-top: var(--spacing-md);
+}
+
+/* Problem Section */
+.section-problem {
+    background-color: var(--color-white);
+    text-align: center;
+}
+
+.problem-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Solution Grid */
+.solution-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+}
+
+.solution-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-sm);
+    text-align: left;
+    transition: border-color 0.3s;
+}
+
+.solution-card:hover {
+    border-color: var(--color-accent);
+}
+
+.solution-card h3 {
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+/* Differentiator */
+.check-list {
+    list-style: none;
+    margin-top: var(--spacing-md);
+}
+
+.check-list li {
+    margin-bottom: var(--spacing-sm);
+    padding-left: 30px;
+    position: relative;
+    font-size: 1.1rem;
+}
+
+.check-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--color-accent);
+    font-weight: bold;
+}
+
+/* Results */
+.bg-light {
+    background-color: var(--color-bg-light);
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-md);
+    text-align: center;
+    margin-top: var(--spacing-lg);
+}
+
+.result-item {
+    background: var(--color-white);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.result-icon {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: var(--spacing-sm);
+}
+
+/* CTA Dark */
+.section-cta-dark {
+    background-color: #050E17;
+    /* Darker than primary */
+    color: var(--color-white);
+    padding: 80px 0;
+}
+
+.mt-md {
+    margin-top: var(--spacing-md);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .results-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .landing-hero h1 {
+        font-size: 2.2rem;
+    }
+}
